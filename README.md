@@ -25,6 +25,10 @@ Now run the example code to move the robot:
 ```
 ros2 run rbe500-example basic_robot_control
 ```
+Or for python:
+```
+ros2 run rbe500_example_py basic_robot_control
+```
 
 
 ---
