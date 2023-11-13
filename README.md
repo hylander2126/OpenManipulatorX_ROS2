@@ -2,12 +2,14 @@
 ROS2 Humble packages to control Open Manipulator X
 
 ## Build
-Unzip files in the src/ directory in a new ROS2 workspace.
+Clone the entire repo into the src/ directory in a new ROS2 workspace.
 
 Run the following to build the packages in your new workspace:
 ```
 colcon build --symlink-install
 ```
+You may get some warning mesages, ignore them for now as long as everything successfully builds.
+
 
 Don't forget to source your workspace:
 ```
