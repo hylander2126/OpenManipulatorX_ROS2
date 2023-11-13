@@ -9,6 +9,11 @@ Run the following to build the packages in your new workspace:
 colcon build --symlink-install
 ```
 
+Don't forget to source your workspace:
+```
+source install/setup.bash
+```
+
 After connecting to the robot over USB, run the following to begin position control:
 ```
 ros2 launch open_manipulator_x_controller open_manipulator_x_controller.launch.py
