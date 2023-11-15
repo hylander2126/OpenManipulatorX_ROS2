@@ -2,7 +2,12 @@
 ROS2 Humble packages to control Open Manipulator X
 
 ## Build
-Clone the entire repo into the src/ directory in a new ROS2 workspace.
+Copy the contents of the entire repository into the src/ directory of a new ROS2 workspace.
+```
+mkdir -p rbe500_ws/src
+cd rbe500_ws
+git clone https://github.com/hylander2126/OpenManipulatorX_ROS2.git ./src
+```
 
 Run the following to build the packages in your new workspace:
 ```
