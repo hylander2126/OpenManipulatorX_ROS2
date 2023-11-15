@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'basic_robot_control = rbe500_example_py.basic_robot_control:main',
-            'forward_kinematics = rbe500_example_py.forward_kinematics:main'
+            'forward_kinematics = rbe500_example_py.forward_kinematics:main',
+            'ik_service = rbe500_example_py.inverse_kinematics:main'
         ],
     },
 )
