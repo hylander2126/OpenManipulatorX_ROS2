@@ -56,6 +56,8 @@ class MinimalSubscriber(Node):
 
         msg.data = "X = " + x + ", Y = " + y + ", Z = " + z
 
+        self.get_logger().info("Publishing: '%s'" % msg.data)
+
         self.publisher_.publish(msg)
 
 def main(args=None):
