@@ -10,6 +10,7 @@ class BasicRobotControl(Node):
     def __init__(self):
         super().__init__('basic_robot_control')
         self.client = self.create_client(SetJointPosition, 'goal_joint_space_path')
+        self.gripper_client = self.create_client(SetJointPosition, '/goal_tool_control')
         while not self.client.wait_for_service(timeout_sec=1.0):
             if not rclpy.ok():
                 self.get_logger().error('Interrupted while waiting for the service. Exiting.')
@@ -19,26 +20,53 @@ class BasicRobotControl(Node):
 
     def send_request(self):
         request = SetJointPosition.Request()
+        gripper_request = SetJointPosition.Request()
         request.planning_group = ''
+        gripper_request.planning_group = 'gripper'
         request.joint_position.joint_name = ['joint1', 'joint2', 'joint3', 'joint4', 'gripper']
+        gripper_request.joint_position.joint_name = ['gripper']
 
-        x_pose = np.array([140, 140, 140, 140, 281])
-        y_pose = np.array([190, 190, -180, -180, 0.0])
-        z_pose = np.array([-50, 50, -50, 50.0, 128])
-        gamma = np.array([-90, -90, -90, -90, 0.0])
+        gripper_request.joint_position.max_accelerations_scaling_factor = 1.0
+        gripper_request.joint_position.max_velocity_scaling_factor = 1.0
+        gripper_request.path_time = 2.0
+
+        # x_pose = np.array([140, 140, 140, 140, 281])
+        # y_pose = np.array([190, 190, -180, -180, 0.0])
+        # z_pose = np.array([-50, 50, -50, 50.0, 128])
+        # gamma = np.array([-90, -90, -90, -90, 0.0])
+
+        time.sleep(4)
+
+        x_pose = np.array([160, 160, 160, 160, 160, 160, 280])
+        y_pose = np.array([-100.0, -100.0, -100.0, 100, 100, 100, 0.0])
+        z_pose = np.array([0.0, -60, 0.0, 0.0, -60, 0.0, 128])
+        gamma = np.array([-90, -90, -90, -90, -90, -90, 0.0])
+
+        gripper_open = 0.01
+        gripper_close = -0.01
+        gripper = np.array([gripper_open, gripper_close, gripper_close, gripper_close, 
+                            gripper_open, gripper_close, gripper_close])
+
         counter = 0
 
         while (counter < len(x_pose)):
 
             angles = self.inverse_kinematics(x_pose[counter], y_pose[counter], z_pose[counter], gamma[counter])
 
-            print(counter, angles*180/math.pi)
+            # print(counter, angles*180/math.pi)
+
+            print("Reached destination ", counter)
 
             request.joint_position.position = [angles[0], angles[1], angles[2], angles[3], 0.05]
             request.path_time = 5.0
             self.future = self.client.call_async(request)
-            
-            time.sleep(7)
+
+            time.sleep(6)
+
+            gripper_request.joint_position.position = [gripper[counter]]
+            self.future = self.gripper_client.call_async(gripper_request)
+
+            time.sleep(0.5)
 
             counter += 1
 
