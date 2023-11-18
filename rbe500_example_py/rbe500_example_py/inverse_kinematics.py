@@ -4,6 +4,7 @@ from open_manipulator_msgs.srv import SetJointPosition
 import sys
 import math
 import numpy as np
+import time
 
 class BasicRobotControl(Node):
     def __init__(self):
@@ -21,23 +22,25 @@ class BasicRobotControl(Node):
         request.planning_group = ''
         request.joint_position.joint_name = ['joint1', 'joint2', 'joint3', 'joint4', 'gripper']
 
-        x_pose = np.array([280, 200])
-        y_pose = np.array([0.0, 50])
-        z_pose = np.array([128, -50])
-        gamma = np.array([0.0, -90])
-        counter = len(x_pose) - 1
+        x_pose = np.array([140, 140, 140, 140, 281])
+        y_pose = np.array([190, 190, -180, -180, 0.0])
+        z_pose = np.array([-50, 50, -50, 50.0, 128])
+        gamma = np.array([-90, -90, -90, -90, 0.0])
+        counter = 0
 
-        while (counter >= 0):
+        while (counter < len(x_pose)):
 
             angles = self.inverse_kinematics(x_pose[counter], y_pose[counter], z_pose[counter], gamma[counter])
 
-            print(counter, angles)
+            print(counter, angles*180/math.pi)
 
             request.joint_position.position = [angles[0], angles[1], angles[2], angles[3], 0.05]
             request.path_time = 5.0
             self.future = self.client.call_async(request)
+            
+            time.sleep(7)
 
-            counter -= 1
+            counter += 1
 
 
     def inverse_kinematics(self, xe, ye, ze, gamma):
@@ -70,12 +73,16 @@ class BasicRobotControl(Node):
             # elbow-up
             J1b = -(math.atan(z3/x3)+B - np.radians(offset))
             J2b = math.pi-a -np.radians(offset)
-            J3b = -(g - J1b - J2b)
+
+            J1b_new = math.atan(z3/x3) + B
+            J2b_new = -(math.pi - a)
+
+            J3b_new = -(g - J1b_new - J2b_new)
 
         else:
             print("dimension error!")
 
-        angles = np.array([theta1, J1b, J2b, math.pi - J3b])
+        angles = np.array([theta1, J1b, J2b, J3b_new])
 
         return angles
 
