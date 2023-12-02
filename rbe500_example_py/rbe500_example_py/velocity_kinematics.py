@@ -10,14 +10,7 @@ class VelocityKinematicsNode(Node):
     def __init__(self):
         super().__init__('velocity_kinematics')
         
-        self.client = self.create_client(SetJointPosition, 'goal_joint_space_path')
-        self.gripper_client = self.create_client(SetJointPosition, '/goal_tool_control')
-        while not self.client.wait_for_service(timeout_sec=1.0):
-            if not rclpy.ok():
-                self.get_logger().error('Interrupted while waiting for the service. Exiting.')
-                sys.exit(0)
-            self.get_logger().info('Service not available, waiting again...')
-        self.send_request()
+        # make service/etc
 
     def makeJacobian(self, q1, q2, q3, q4):
         
@@ -59,18 +52,18 @@ class VelocityKinematicsNode(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    basic_robot_control = BasicRobotControl()
+    node = VelocityKinematicsNode()
 
     while rclpy.ok():
-        rclpy.spin_once(basic_robot_control)
-        if basic_robot_control.future.done():
+        rclpy.spin_once(node)
+        if node.future.done():
             try:
-                response = basic_robot_control.future.result()
+                response = node.future.result()
             except Exception as e:
-                basic_robot_control.get_logger().error('Service call failed %r' % (e,))
+                node.get_logger().error('Service call failed %r' % (e,))
             break
 
-    basic_robot_control.destroy_node()
+    node.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
