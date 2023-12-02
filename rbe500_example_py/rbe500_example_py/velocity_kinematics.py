@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
-from open_manipulator_msgs.srv import SetJointPosition
+from open_manipulator_msgs.srv import GetLinearVelocity
+from open_manipulator_msgs.srv import GetJointVelocity
 import sys
 import math
 import numpy as np
@@ -9,8 +10,26 @@ import time
 class VelocityKinematicsNode(Node):
     def __init__(self):
         super().__init__('velocity_kinematics')
-        
-        # make service/etc
+        self.forward_vk_srv = self.create_service(GetLinearVelocity, "forward_vk", self.forward_vk_callback)
+        self.inverse_vk_srv = self.create_service(GetJointVelocity, "inverse_vk", self.inverse_vk_callback)
+        # make services/etc
+
+    def forward_vk_callback(self, request, response):
+        jacob = self.makeJacobian(request.q1, request.q2, request.q3, request.q4)
+        velocities = np.matmul(jacob, np.transpose(np.array([request.qd1, request.qd2, request.qd3, request.qd4])))
+        response.xd = velocities[0]
+        response.yd = velocities[1]
+        response.zd = velocities[2]
+        return response
+
+    def inverse_vk_callback(self, request, response):
+        i_jacob = self.makeInverseJacobian(request.q1, request.q2, request.q3, request.q4)
+        velocities = np.matmul(i_jacob, np.transpose(np.array([request.xd, request.yd, request.zd])))
+        response.qd1 = velocities[0]
+        response.qd2 = velocities[1]
+        response.qd3 = velocities[2]
+        response.qd4 = velocities[3]
+        return response
 
     def makeJacobian(self, q1, q2, q3, q4):
         
@@ -54,14 +73,7 @@ def main(args=None):
 
     node = VelocityKinematicsNode()
 
-    while rclpy.ok():
-        rclpy.spin_once(node)
-        if node.future.done():
-            try:
-                response = node.future.result()
-            except Exception as e:
-                node.get_logger().error('Service call failed %r' % (e,))
-            break
+    rclpy.spin(node)
 
     node.destroy_node()
     rclpy.shutdown()

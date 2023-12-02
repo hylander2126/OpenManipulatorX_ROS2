@@ -23,7 +23,8 @@ setup(
             'basic_robot_control = rbe500_example_py.basic_robot_control:main',
             'forward_kinematics = rbe500_example_py.forward_kinematics:main',
             'inverse_kinematics = rbe500_example_py.inverse_kinematics:main',
-            'test_gripper    = rbe500_example_py.test_gripper:main'
+            'test_gripper    = rbe500_example_py.test_gripper:main',
+            'velocity_kinematics = rbe500_example_py.velocity_kinematics:main'
         ],
     },
 )

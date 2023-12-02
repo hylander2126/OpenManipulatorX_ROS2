@@ -32,6 +32,8 @@ set(msg_files
 set(srv_files
   "srv/GetJointPosition.srv"
   "srv/GetKinematicsPose.srv"
+  "srv/GetLinearVelocity.srv" # ADDED
+  "srv/GetJointVelocity.srv" # ADDED
   "srv/SetJointPosition.srv"
   "srv/SetKinematicsPose.srv"
   "srv/SetDrawingTrajectory.srv"
