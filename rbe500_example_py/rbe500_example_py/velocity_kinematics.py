@@ -10,12 +10,6 @@ class VelocityKinematicsNode(Node):
     def __init__(self):
         super().__init__('velocity_kinematics')
         
-        # arm link lengths
-        self.L12 = 96.326
-        self.L3 = 130.23
-        self.L4 = 124
-        self.L5 = 133.4
-        
         self.client = self.create_client(SetJointPosition, 'goal_joint_space_path')
         self.gripper_client = self.create_client(SetJointPosition, '/goal_tool_control')
         while not self.client.wait_for_service(timeout_sec=1.0):
@@ -26,13 +20,18 @@ class VelocityKinematicsNode(Node):
         self.send_request()
 
     def makeJacobian(self, q1, q2, q3, q4):
+        
+        L12 = 96.326
+        L3 = 130.23
+        L4 = 124
+        L5 = 133.4
 
         # assume joint positions are passed in as radians
         
         q2preload = math.radians(10.807)
         q34preload = math.radians(90)
         
-        x_star = (self.L3 * math.sin(q2 + q2preload)) + (L4 * math.sin(q2+q3+q34preload)) + (L5 * math.sin(q2+q3+q4+q34preload))
+        x_star = (L3 * math.sin(q2 + q2preload)) + (L4 * math.sin(q2+q3+q34preload)) + (L5 * math.sin(q2+q3+q4+q34preload))
         
         q4xy = L5 * math.cos(q2+q3+q4+q34preload)
         q3xy = q4xy + (L4 * math.cos(q2+q3+q34preload))
@@ -51,6 +50,10 @@ class VelocityKinematicsNode(Node):
                           [           0,        q2z,        q3z,        q4z]])  # z
 
         return jacob
+    
+    def makeInverseJacobian(self, q1, q2, q3, q4):
+        jacob = self.makeJacobian(q1, q2, q3, q4)
+        return np.linalg.pinv(jacob)
 
 
 def main(args=None):
