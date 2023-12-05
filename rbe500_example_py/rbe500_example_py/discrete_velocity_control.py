@@ -53,7 +53,13 @@ class DiscreteVelocityController(Node):
         request.yd = self.set_velocity[1]
         request.zd = self.set_velocity[2]
         
-        joint_vels = self.vel_client.call(request) 
+        joints_future = self.vel_client.call_async(request)
+        
+        joints_future.add_done_callback(self.joints_future_callback)
+    
+    def joints_future_callback(self, joints_future):    
+        self.get_logger().info("Recieved velocities.")
+        joint_vels = joints_future.result()
         self.position_reference[0] += joint_vels.qd1 * self.assumed_velocity_discrete_time_ms / 1000.0
         self.position_reference[1] += joint_vels.qd2 * self.assumed_velocity_discrete_time_ms / 1000.0
         self.position_reference[2] += joint_vels.qd3 * self.assumed_velocity_discrete_time_ms / 1000.0
