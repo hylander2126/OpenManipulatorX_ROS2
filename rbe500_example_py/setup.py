@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'basic_robot_control = rbe500_example_py.basic_robot_control:main',
+            'discrete_velocity_control = rbe500_example_py.discrete_velocity_control:main',
             'forward_kinematics = rbe500_example_py.forward_kinematics:main',
             'inverse_kinematics = rbe500_example_py.inverse_kinematics:main',
             'test_gripper    = rbe500_example_py.test_gripper:main',

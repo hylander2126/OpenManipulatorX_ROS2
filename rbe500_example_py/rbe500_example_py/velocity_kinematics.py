@@ -15,6 +15,7 @@ class VelocityKinematicsNode(Node):
         # make services/etc
 
     def forward_vk_callback(self, request, response):
+        self.get_logger().info("Forward VK callback generated.")
         jacob = self.makeJacobian(request.q1, request.q2, request.q3, request.q4)
         velocities = np.matmul(jacob, np.transpose(np.array([request.qd1, request.qd2, request.qd3, request.qd4])))
         response.xd = velocities[0]
@@ -23,12 +24,14 @@ class VelocityKinematicsNode(Node):
         return response
 
     def inverse_vk_callback(self, request, response):
+        self.get_logger().info("Inverse VK callback generated.")
         i_jacob = self.makeInverseJacobian(request.q1, request.q2, request.q3, request.q4)
         velocities = np.matmul(i_jacob, np.transpose(np.array([request.xd, request.yd, request.zd])))
         response.qd1 = velocities[0]
         response.qd2 = velocities[1]
         response.qd3 = velocities[2]
         response.qd4 = velocities[3]
+        self.get_logger().info("Returning...")
         return response
 
     def makeJacobian(self, q1, q2, q3, q4):
