@@ -9,8 +9,8 @@ class DiscreteVelocityController(Node):
     def __init__(self):
         super().__init__('discrete_velocity_control')
         self.position_reference = [-1.0, 0.0, 0.0, 0.0, 0.0] # joint space, not including gripper
-        self.set_velocity = [0.0, 30.0, 0.0] # mm/s
-        self.assumed_velocity_discrete_time_ms = 100.0
+        self.set_velocity = [0.0, 20.0, 0.0] # mm/s
+        self.assumed_velocity_discrete_time_ms = 20.0
         
         self.arm_client = self.create_client(SetJointPosition, 'goal_joint_space_path')
         while not self.arm_client.wait_for_service(timeout_sec=1.0):
@@ -54,8 +54,9 @@ class DiscreteVelocityController(Node):
         request.zd = self.set_velocity[2]
         
         joints_future = self.vel_client.call_async(request)
-        
         joints_future.add_done_callback(self.joints_future_callback)
+        
+        rclpy.spin_until_future_complete(self, joints_future)
     
     def joints_future_callback(self, joints_future):    
         self.get_logger().info("Recieved velocities.")
@@ -81,7 +82,7 @@ def main(args=None):
             break
         controller.tick_velocity() # do these every ~10ms
         controller.send_position()
-        time.sleep(100/1000.0) # delay for 10ms before continuing
+        time.sleep(20/1000.0) # delay for 10ms before continuing
         
     controller.destroy_node()
     rclpy.shutdown()
