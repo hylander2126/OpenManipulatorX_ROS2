@@ -29,7 +29,35 @@ Or for python:
 ```
 ros2 run rbe500_example_py basic_robot_control
 ```
+## Forward Kinematics
+Prints the end-effector position, reading the current joint values. 
+To run the forward kinematics node:
+```
+ros2 run rbe500_example_py forward_kineatics
+```
+## Inverse Kinematics
+Moves the end-effector to the desired position.
+To run the inverse kinematics node:
+```
+ros2 run rbe500_example_py inverse_kineatics
+```
+Video link for pick and place of an object, performed using inverse kinematics - https://youtube.com/shorts/_iANV6D9pfc
 
+## Velocity Kinematics
+Calculates the end-effector velocity by reading the joint velocities and vice versa using a Jacobian matrix.
+```
+ros2 run rbe500_example_py velocity_kineatics
+```
+To validate the velocity kinematics, a discrete velocity controller is implemented. Constant end-effector velocity is given as input, to run the node:
+```
+ros2 run rbe500_example_py discrete_velocity_control
+```
+Video link to show the end-effector moving in a straight line - https://youtu.be/-0vHnbNme9Y 
 
+To visualize the end-effector position run:
+```
+cd ~/rbe500_example_py
+python3 visualization.py
+```
 ---
 RBE 500 - Foundations of Robotics 2023 taught by Professor Berk Calli at Worcester Polytechnic Institute Robotics Engineering Department
