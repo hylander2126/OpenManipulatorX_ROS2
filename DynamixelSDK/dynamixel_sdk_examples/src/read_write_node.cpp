@@ -49,7 +49,7 @@
 #define PROTOCOL_VERSION 2.0  // Default Protocol version of DYNAMIXEL X series.
 
 // Default setting
-#define BAUDRATE 57600  // Default Baudrate of DYNAMIXEL X series
+#define BAUDRATE 1000000 // 57600  // Default Baudrate of DYNAMIXEL X series
 #define DEVICE_NAME "/dev/ttyUSB0"  // [Linux]: "/dev/ttyUSB*", [Windows]: "COM*"
 
 dynamixel::PortHandler * portHandler;
@@ -138,7 +138,7 @@ ReadWriteNode::~ReadWriteNode()
 
 void setupDynamixel(uint8_t dxl_id)
 {
-  // Use Position Control Mode
+  // Use Position Control Mode 
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler,
     dxl_id,
@@ -151,6 +151,12 @@ void setupDynamixel(uint8_t dxl_id)
     RCLCPP_ERROR(rclcpp::get_logger("read_write_node"), "Failed to set Position Control Mode.");
   } else {
     RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to set Position Control Mode.");
+  }
+
+  if (dxl_comm_result != COMM_SUCCESS) {
+    RCLCPP_ERROR(rclcpp::get_logger("read_write_node"), "Failed to set Current Control Mode.");
+  } else {
+    RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to set Current Control Mode.");
   }
 
   // Enable Torque of DYNAMIXEL
