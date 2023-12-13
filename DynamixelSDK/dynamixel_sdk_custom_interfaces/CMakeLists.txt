@@ -17,10 +17,12 @@ find_package(rosidl_default_generators REQUIRED)
 
 set(msg_files
   "msg/SetPosition.msg"
+  "msg/SetCurrent.msg"
 )
 
 set(srv_files
   "srv/GetPosition.srv"
+  "srv/GetCurrent.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
