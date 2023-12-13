@@ -1,0 +1,6 @@
+# Constants
+# Request
+uint8 id
+---
+# Response (might need int32 like position)
+int16 current
