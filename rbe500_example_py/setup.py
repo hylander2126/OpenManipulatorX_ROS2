@@ -25,7 +25,9 @@ setup(
             'forward_kinematics = rbe500_example_py.forward_kinematics:main',
             'inverse_kinematics = rbe500_example_py.inverse_kinematics:main',
             'test_gripper    = rbe500_example_py.test_gripper:main',
-            'velocity_kinematics = rbe500_example_py.velocity_kinematics:main'
+            'velocity_kinematics = rbe500_example_py.velocity_kinematics:main',
+            'pd_controller = rbe500_example_py.pd_controller:main',
+            'pd_sam = rbe500_example_py.pd_sam:main'
         ],
     },
 )
